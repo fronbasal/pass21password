@@ -1,4 +1,12 @@
-# pass2csv
+# pass21password
+
+This repository is a fork of [reinefjord/pass2csv](https://github.com/reinefjord/pass2csv).
+The script will not adhere to `KPX_FORMAT`, instead it will attempt to generate a 1password-compatible CSV file.
+
+This script is tailored to **my** needs and will probably need adjusting before used for your specific directory structure.
+
+---
+
 Needs [python-gnupg](https://pypi.python.org/pypi/python-gnupg) and python3.
 Run with path to password store as argument:
 
