@@ -18,13 +18,12 @@ class CSVExporter:
         # See README for differences
         self.kpx_format = kpx_format
 
-        if self.kpx_format:
-            # A list of possible fields (in order) that could be converted to login fields
-            self.login_fields = ["login", "user", "username", "email"]
-            # Set to True to extract url fields
-            self.get_url = True
-            # A regular expression list of lines that should be excluded from the notes field
-            self.exclude_rows = ["^---$", "^autotype ?: ?"]
+        # A list of possible fields (in order) that could be converted to login fields
+        self.login_fields = ["login", "user", "username", "email"]
+        # Set to True to extract url fields
+        self.get_url = True
+        # A regular expression list of lines that should be excluded from the notes field
+        self.exclude_rows = ["^---$", "^autotype ?: ?"]
 
         self.logger.info("Using KPX format: %s", self.kpx_format)
 
@@ -88,19 +87,21 @@ class CSVExporter:
 
     def parse(self, basepath, path, data):
         name = os.path.splitext(os.path.basename(path))[0]
-        group = os.path.dirname(os.path.os.path.relpath(path, basepath))
+        group = os.path.dirname(os.path.relpath(path, basepath))
         split_data = data.split("\n", maxsplit=1)
         password = split_data[0]
         # Perform if/else in case there are no notes for a field
         notes = split_data[1] if len(split_data) > 1 else ""
         self.logger.info("Processing %s", os.path.join(group, name))
-        if self.kpx_format:
-            # We are using the advanced format; try extracting user and url
-            user, url, notes = self.getMetadata(notes)
-            return [group, name, user, password, url, notes]
-        else:
-            # We are not using KPX format; just use notes
-            return [group, name, password, notes]
+        # We are using the advanced format; try extracting user and url
+        user, url, notes = self.getMetadata(notes)
+        user = os.path.basename(name).replace(".gpg", "")
+        url = group
+        # Return in 1password-compatible format
+        if url == "" or group == "" or user == "" or password == "":
+            print("Failed to parse %s!" % path)
+            return None
+        return [group, url, user, password, notes]
 
 
 def main(kpx_format, gpgbinary, use_agent, pass_path):
@@ -117,7 +118,9 @@ def main(kpx_format, gpgbinary, use_agent, pass_path):
                 if len(data) == 0:
                     print("Warning: Could not read password file %s" % file_path)
                     continue
-                csv_data.append(exporter.parse(pass_path, file_path, data))
+                export = exporter.parse(pass_path, file_path, data)
+                if export is not None:
+                    csv_data.append(export)
 
     with open("pass.csv", "w", newline="") as csv_file:
         writer = csv.writer(csv_file, delimiter=",")
