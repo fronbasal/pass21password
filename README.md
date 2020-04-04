@@ -5,6 +5,15 @@ The script will not adhere to `KPX_FORMAT`, instead it will attempt to generate 
 
 This script is tailored to **my** needs and will probably need adjusting before used for your specific directory structure.
 
+It asserts the following structure inside the pass store:
+
+        example.com/foobar.gpg
+
+- All passwords are inside a directory (the directory name is stored as the `name` & `url` field!
+- The file name is the username (e.g. `foobar` is the username for `example.com`, so the path is `example.com/foobar.gpg`)
+- The first line of the gpg file is the password (e.g. `foobar.gpg` contains `example123` when decrypted)
+- All other lines are stored in the `notes` field of the resulting csv
+
 ---
 
 Needs [python-gnupg](https://pypi.python.org/pypi/python-gnupg) and python3.
