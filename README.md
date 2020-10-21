@@ -7,7 +7,7 @@ This script is tailored to **my** needs and will probably need adjusting before 
 
 It asserts the following structure inside the pass store:
 
-        example.com/foobar.gpg
+> example.com/foobar.gpg
 
 - All passwords are inside a directory (the directory name is stored as the `name` & `url` field!
 - The file name is the username (e.g. `foobar` is the username for `example.com`, so the path is `example.com/foobar.gpg`)
@@ -26,6 +26,6 @@ python3 pass2csv.py ~/.password-store
 
 The format for [1Password](https://support.1password.com/create-csv-files/):
 
-        title,website,username,password,notes,*custom_fields
+`title,website,username,password,notes,*custom_fields`
 
 Where 'Password' is the first line of the entry in `pass` and 'Notes' are all subsequent lines.
