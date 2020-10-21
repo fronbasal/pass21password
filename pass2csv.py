@@ -89,7 +89,11 @@ class CSVExporter:
         name = os.path.splitext(os.path.basename(path))[0]
         group = os.path.dirname(os.path.relpath(path, basepath))
         split_data = data.split("\n", maxsplit=1)
-        password = split_data[0]
+        password = (
+            split_data[0]
+            if split_data[0] != "GOPASS-SECRET-1.0"
+            else split_data[1].split(":")[1].strip()
+        )
         # Perform if/else in case there are no notes for a field
         notes = split_data[1] if len(split_data) > 1 else ""
         self.logger.info("Processing %s", os.path.join(group, name))
@@ -97,6 +101,7 @@ class CSVExporter:
         user, url, notes = self.getMetadata(notes)
         user = os.path.basename(name).replace(".gpg", "")
         url = group
+        notes = ""
         # Return in 1password-compatible format
         if url == "" or group == "" or user == "" or password == "":
             print("Failed to parse %s!" % path)
